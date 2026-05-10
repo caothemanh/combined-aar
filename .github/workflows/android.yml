@@ -28,8 +28,20 @@ jobs:
       - name: Install gomobile
         run: |
           export GOTOOLCHAIN=local
+
           go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20231127183840-76ac6878050a
           go install golang.org/x/mobile/cmd/gobind@v0.0.0-20231127183840-76ac6878050a
+
+      - name: Clone dependencies
+        run: |
+          mkdir -p $(go env GOPATH)/src/github.com/Psiphon-Labs
+          mkdir -p $(go env GOPATH)/src/github.com/xtls
+
+          git clone https://github.com/Psiphon-Labs/psiphon-tunnel-core.git \
+            $(go env GOPATH)/src/github.com/Psiphon-Labs/psiphon-tunnel-core
+
+          git clone https://github.com/XTLS/Xray-core.git \
+            $(go env GOPATH)/src/github.com/xtls/xray-core
 
       - name: Build AAR
         run: |
@@ -50,6 +62,7 @@ jobs:
             -androidapi 21 \
             -o combined.aar \
             example.com/combined/lib
+
       - name: Upload AAR
         uses: actions/upload-artifact@v4
         with:

@@ -37,13 +37,11 @@ jobs:
 
           export GO111MODULE=off
 
-          mkdir -p /tmp/gopath/src/example.com
+          mkdir -p $(go env GOPATH)/src/example.com
 
-          cp -r $GITHUB_WORKSPACE /tmp/gopath/src/example.com/combined
+          cp -r $GITHUB_WORKSPACE $(go env GOPATH)/src/example.com/combined
 
-          cd /tmp/gopath/src/example.com/combined
-
-          go env
+          cd $(go env GOPATH)/src/example.com/combined
 
           go build example.com/combined/lib
 
