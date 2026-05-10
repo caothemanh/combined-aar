@@ -43,7 +43,7 @@ jobs:
 
       - name: Prepare modules
         run: |
-          echo 'replace golang.org/x/mobile => /tmp/mobile' >> go.mod
+          go mod edit -replace=golang.org/x/mobile=/tmp/mobile
 
           go mod tidy
 

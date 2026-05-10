@@ -7,6 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GOTOOLCHAIN: local
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,43 +28,34 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install gomobile
+      - name: Clone x/mobile
         run: |
-          export GOTOOLCHAIN=local
+          cd /tmp
 
-          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20231127183840-76ac6878050a
-          go install golang.org/x/mobile/cmd/gobind@v0.0.0-20231127183840-76ac6878050a
+          git clone https://github.com/golang/mobile.git
 
-      - name: Clone dependencies
+          cd mobile
+
+          git checkout 76ac6878050a
+
+          go build -o ~/go/bin/gobind ./cmd/gobind
+          go build -o ~/go/bin/gomobile ./cmd/gomobile
+
+      - name: Prepare modules
         run: |
-          mkdir -p $(go env GOPATH)/src/github.com/Psiphon-Labs
-          mkdir -p $(go env GOPATH)/src/github.com/xtls
+          echo 'replace golang.org/x/mobile => /tmp/mobile' >> go.mod
 
-          git clone https://github.com/Psiphon-Labs/psiphon-tunnel-core.git \
-            $(go env GOPATH)/src/github.com/Psiphon-Labs/psiphon-tunnel-core
-
-          git clone https://github.com/XTLS/Xray-core.git \
-            $(go env GOPATH)/src/github.com/xtls/xray-core
+          go mod tidy
 
       - name: Build AAR
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
 
-          export GO111MODULE=off
-
-          mkdir -p $(go env GOPATH)/src/example.com
-
-          cp -r $GITHUB_WORKSPACE $(go env GOPATH)/src/example.com/combined
-
-          cd $(go env GOPATH)/src/example.com/combined
-
-          go build example.com/combined/lib
-
           gomobile bind \
             -target=android \
             -androidapi 21 \
             -o combined.aar \
-            example.com/combined/lib
+            ./lib
 
       - name: Upload AAR
         uses: actions/upload-artifact@v4
