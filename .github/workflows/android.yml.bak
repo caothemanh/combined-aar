@@ -43,10 +43,6 @@ jobs:
 
           cd /tmp/gopath/src/example.com/combined
 
-          go env
-
-          go build example.com/combined/lib
-
           gomobile bind \
             -target=android \
             -androidapi 21 \
