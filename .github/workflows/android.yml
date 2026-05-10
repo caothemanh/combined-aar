@@ -35,9 +35,13 @@ jobs:
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
 
-          echo 'replace golang.org/x/mobile => /tmp/mobile' >> go.mod
+          export GO111MODULE=off
 
-          cat go.mod
+          mkdir -p /tmp/gopath/src/example.com
+
+          cp -r $GITHUB_WORKSPACE /tmp/gopath/src/example.com/combined
+
+          cd /tmp/gopath/src/example.com/combined
 
           gomobile bind \
             -target=android \
