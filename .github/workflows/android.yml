@@ -35,12 +35,15 @@ jobs:
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
 
+          echo 'replace golang.org/x/mobile => /tmp/mobile' >> go.mod
+
+          cat go.mod
+
           gomobile bind \
             -target=android \
             -androidapi 21 \
             -o combined.aar \
             example.com/combined/lib
-
       - name: Upload AAR
         uses: actions/upload-artifact@v4
         with:
