@@ -31,11 +31,6 @@ jobs:
           go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20231127183840-76ac6878050a
           go install golang.org/x/mobile/cmd/gobind@v0.0.0-20231127183840-76ac6878050a
 
-      - name: Init gomobile
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin
-          gomobile init
-
       - name: Build AAR
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
